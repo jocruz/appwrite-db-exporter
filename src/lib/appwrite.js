@@ -9,3 +9,4 @@ const account = new Account(client);
 const databases = new Databases(client); // Add Databases client
 
 export { account, client, databases };
+
