@@ -1,4 +1,4 @@
-import { account, databases } from '../lib/appwrite';
+import { account } from '../lib/appwrite';
 
 export const login = async (email, password) => {
     try {
@@ -28,17 +28,6 @@ export const getCurrentSession = async () => {
         return response; // Success
     } catch (error) {
         console.error('No active session found:', error);
-        throw error; // Failure
-    }
-};
-
-export const fetchDatabases = async () => {
-    try {
-        const response = await databases.list(); // Fetch the list of databases
-        console.log('Fetched databases:', response.databases);
-        return response.databases; // Return the list of databases
-    } catch (error) {
-        console.error('Fetching databases failed:', error);
         throw error; // Failure
     }
 };
