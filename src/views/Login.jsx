@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useUser } from '../contexts/UserContext'; // Adjust path as needed
 
 const Login = () => {
-    const { user, handleLogin, handleLogout, error, databases } = useUser();
+    const { user, handleLogin, handleLogout, error } = useUser();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -26,16 +26,6 @@ const Login = () => {
                 <div>
                     <p>Welcome, {user.email}</p>
                     <button onClick={handleLogout}>Logout</button>
-                    <h3>Databases:</h3>
-                    {databases.length > 0 ? (
-                        <ul>
-                            {databases.map((db) => (
-                                <li key={db.$id}>{db.name}</li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p>No databases available</p>
-                    )}
                 </div>
             ) : (
                 <form onSubmit={handleSubmit}>
