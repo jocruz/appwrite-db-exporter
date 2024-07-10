@@ -1,8 +1,8 @@
 // src/App.js
 
 import React from 'react';
-import { UserProvider } from './contexts/UserContext'; // Adjust path as needed
-import Login from './views/Login'; // Adjust path as needed
+import { UserProvider } from './components/contexts/UserContext'; // Adjust path as needed
+import Login from './components/pages/Login'
 
 const App = () => {
     return (

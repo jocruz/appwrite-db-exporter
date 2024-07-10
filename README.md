@@ -1,70 +1,210 @@
-# Getting Started with Create React App
+# 📚 Appwrite Data to CSV - README
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Welcome to the Appwrite Data to CSV project! This README will guide you through the structure and functionality of key components in this project.
 
-## Available Scripts
+To start the project we are using Yarn Package Manager,
 
-In the project directory, you can run:
+``` $yarn ```
+``` $yarn install ```
+```$ yarn start ```
 
-### `npm start`
+## 🚀 Project Structure
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 📂 `pages/Login.jsx`
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+#### Description
+The `Login` component provides the user interface for logging in and displaying user-specific documents. It manages user input for email and password, handles the login process, and conditionally renders either the login form or user information based on the user's authentication state.
 
-### `npm test`
+#### Important Points
+- **State Management**: Manages email and password inputs using `useState`.
+- **Form Submission**: Handles form submission to log in the user.
+- **Document Rendering**: Displays a list of documents for the logged-in user.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+#### Key Functionality
+- **handleSubmit**: Manages form submission for login.
+  ```jsx
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      await handleLogin(email, password);
+      console.log("Login successful!");
+    } catch (error) {
+      console.error("Login failed:", error.message);
+    }
+  };
+  ```
+- **renderDocuments**: Displays documents associated with the user.
+  ```jsx
+  const renderDocuments = () =>
+    documents.length > 0 ? (
+      <ul>
+        {documents.map((doc) => (
+          <li key={doc.$id}>{doc.$id}</li>
+        ))}
+      </ul>
+    ) : (
+      <p>No documents available.</p>
+    );
+  ```
 
-### `npm run build`
+### 📂 `contexts/UserContext.jsx`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+#### Description
+The `UserContext` manages user authentication and related operations. It provides a context for managing the user's session, logging in, logging out, and fetching user-specific documents.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+#### Important Points
+- **State Management**: Manages user, documents, and error states.
+- **Session Initialization**: Initializes user session on component mount.
+- **Login/Logout Handling**: Functions to handle user login and logout.
+- **Document Fetching**: Fetches documents from the database for the current user.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+#### Key Functionality
+- **initializeSession**: Initializes the user session on component mount.
+  ```jsx
+  useEffect(() => {
+    const initializeSession = async () => {
+      try {
+        const session = await getCurrentSession();
+        setUser(session);
+      } catch (error) {
+        console.error("No active session found:", error);
+        setError("Failed to fetch session");
+      }
+    };
+    initializeSession();
+  }, []);
+  ```
+- **handleLogin**: Handles user login.
+  ```jsx
+  const handleLogin = async (email, password) => {
+    try {
+      const response = await login(email, password);
+      setUser(response);
+      await fetchDocuments();
+      setError(null);
+    } catch (error) {
+      console.error("Login failed:", error);
+      setError("Login failed");
+    }
+  };
+  ```
+- **handleLogout**: Handles user logout.
+  ```jsx
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setUser(null);
+      setDocuments([]);
+      setError(null);
+    } catch (error) {
+      console.error("Logout failed:", error);
+      setError("Logout failed");
+    }
+  };
+  ```
 
-### `npm run eject`
+### 📂 `api/authentication/AuthService.js`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+#### Description
+The `AuthService` provides functions for user authentication and data fetching from the Appwrite backend. It includes login, logout, session management, and document fetching functionalities.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+#### Important Points
+- **Error Handling**: Each function handles errors and logs them appropriately.
+- **Asynchronous Operations**: Uses async/await for asynchronous operations.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+#### Key Functionality
+- **login**: Logs in a user using email and password.
+  ```javascript
+  export const login = async (email, password) => {
+    try {
+      const response = await account.createEmailPasswordSession(email, password);
+      console.log("Login successful:", response);
+      return response;
+    } catch (error) {
+      console.error("Login failed:", error);
+      throw error;
+    }
+  };
+  ```
+- **logout**: Logs out the current user session.
+  ```javascript
+  export const logout = async () => {
+    try {
+      await account.deleteSession("current");
+      console.log("Logout successful");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      throw error;
+    }
+  };
+  ```
+- **getCurrentSession**: Retrieves the current user session.
+  ```javascript
+  export const getCurrentSession = async () => {
+    try {
+      const response = await account.get();
+      console.log("Current session:", response);
+      return response;
+    } catch (error) {
+      console.error("No active session found:", error);
+      throw error;
+    }
+  };
+  ```
+- **getDocuments**: Fetches documents from a specific collection in the database.
+  ```javascript
+  export const getDocuments = async (databaseId, collectionId) => {
+    try {
+      const response = await databases.listDocuments(databaseId, collectionId);
+      console.log("Documents:", response);
+      return response.documents;
+    } catch (error) {
+      console.error("Fetching documents failed:", error);
+      throw error;
+    }
+  };
+  ```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### 📂 `api/appwriteClient.js`
 
-## Learn More
+#### Description
+Initializes the Appwrite client with the specified endpoint and project ID. It sets up the `Account` and `Databases` services used for user authentication and database interactions.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+#### Important Points
+- **Environment Variables**: Uses environment variables for endpoint and project ID.
+- **Service Setup**: Configures the Appwrite `Account` and `Databases` services.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+#### Key Functionality
+- **Client Initialization**: Sets up the Appwrite client.
+  ```javascript
+  const client = new Client();
+  client.setEndpoint(process.env.REACT_APP_APPWRITE_ENDPOINT);
+  client.setProject(process.env.REACT_APP_PROJECT_ID);
+  ```
+- **Service Setup**: Configures `Account` and `Databases` services.
+  ```javascript
+  const account = new Account(client);
+  const databases = new Databases(client);
+  ```
 
-### Code Splitting
+### 📂 `src/App.js`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+#### Description
+The main application component that integrates the `UserProvider` and renders the `Login` component. It serves as the root component of the application.
 
-### Analyzing the Bundle Size
+#### Important Points
+- **Context Provider**: Wraps the application with `UserProvider` to provide user context.
+- **Component Rendering**: Renders the `Login` component.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+#### Key Functionality
+- **UserProvider**: Provides user context to the application.
+  ```jsx
+  <UserProvider>
+    <div className="App">
+      <Login />
+      {/* Other components and routes */}
+    </div>
+  </UserProvider>
+  ```
 
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
