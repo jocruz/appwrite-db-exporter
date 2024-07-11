@@ -1,72 +1,70 @@
-import { account, databases } from "../appwriteClient"; // Importing account and databases from Appwrite client configuration.
+// Imports the necessary classes for Appwrite interaction.
+import { account, databases } from "../appwriteClient";
+
+// Pre-defined constants for database and collection IDs from environment variables.
+const DATABASE_ID = process.env.REACT_APP_DATABASE_ID;
+const COLLECTION_ID = process.env.REACT_APP_COLLECTION_ID;
 
 /**
- * Logs in a user using email and password.
- *
- * @param {string} email - The user's email address.
+ * Authenticates a user with email and password, retrieves session details.
+ * @param {string} email - The user's email.
  * @param {string} password - The user's password.
- * @returns {Object} response - The response from the Appwrite API on successful login.
- * @throws Will throw an error if the login attempt fails.
+ * @returns {Object} - Contains user session information and identifiers for database access.
+ * @throws Error when authentication fails.
  */
 export const login = async (email, password) => {
   try {
-    const response = await account.createEmailPasswordSession(email, password);
-    console.log("Login successful:", response);
-    return response; // Return the successful login response.
+    const loginResponse = await account.createEmailPasswordSession(email, password);
+    console.log(loginResponse);
+    return { user: loginResponse, databaseId: DATABASE_ID, collectionId: COLLECTION_ID };
   } catch (error) {
     console.error("Login failed:", error);
-    throw error; // Throw an error if login fails.
+    throw error;
   }
 };
 
 /**
- * Logs out the current user session.
- *
- * @returns {void}
- * @throws Will throw an error if the logout attempt fails.
+ * Retrieves documents from a specified database and collection.
+ * @returns {Array} - Documents fetched from the database.
+ * @throws Error when document retrieval fails.
+ */
+export const getDocuments = async () => {
+  try {
+    const response = await databases.listDocuments(DATABASE_ID, COLLECTION_ID);
+    console.log("Documents:", response);
+    return response.documents;
+  } catch (error) {
+    console.error("Fetching documents failed:", error);
+    throw error;
+  }
+};
+
+/**
+ * Ends the current user session.
+ * @throws Error when logout fails.
  */
 export const logout = async () => {
   try {
-    await account.deleteSession("current"); // Logs out the current session.
+    await account.deleteSession("current");
     console.log("Logout successful");
   } catch (error) {
     console.error("Logout failed:", error);
-    throw error; // Throw an error if logout fails.
+    throw error;
   }
 };
 
 /**
- * Retrieves the current user session.
- *
- * @returns {Object} response - The current session data from the Appwrite API.
- * @throws Will throw an error if no active session is found or if retrieval fails.
+ * Retrieves the current active session for a user.
+ * @returns {Object} - Current session information.
+ * @throws Error when no session is found or retrieval fails.
  */
 export const getCurrentSession = async () => {
   try {
     const response = await account.get();
     console.log("Current session:", response);
-    return response; // Return the current session data.
+    return response;
   } catch (error) {
     console.error("No active session found:", error);
-    throw error; // Throw an error if no active session is found.
-  }
-};
-
-/**
- * Fetches documents from a specific collection in the database.
- *
- * @param {string} databaseId - The ID of the database to fetch documents from.
- * @param {string} collectionId - The ID of the collection to fetch documents from.
- * @returns {Array} response.documents - An array of documents from the specified collection.
- * @throws Will throw an error if fetching documents fails.
- */
-export const getDocuments = async (databaseId, collectionId) => {
-  try {
-    const response = await databases.listDocuments(databaseId, collectionId);
-    console.log("Documents:", response);
-    return response.documents; // Return the fetched documents.
-  } catch (error) {
-    console.error("Fetching documents failed:", error);
-    throw error; // Throw an error if fetching documents fails.
+    throw error;
   }
 };

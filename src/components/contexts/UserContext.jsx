@@ -1,82 +1,64 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { getCurrentSession, getDocuments, login, logout } from "../api/authentication/AuthService";
 
-// Create a context to manage user authentication and related operations.
+// Create a context for managing user state across the application.
 const UserContext = createContext();
 
-// Define a provider component that will encapsulate the logic for user authentication and data fetching.
+// Provider component to encapsulate user state management.
 export const UserProvider = ({ children }) => {
-  // Local state to store the current user, documents, and any errors encountered.
+  // State hooks for managing user data, documents, and potential errors.
   const [user, setUser] = useState(null);
   const [documents, setDocuments] = useState([]);
   const [error, setError] = useState(null);
 
-  // Retrieve environment variables for the database and collection IDs.
-  const databaseId = process.env.REACT_APP_DATABASE_ID;
-  const collectionId = process.env.REACT_APP_COLLECTION_ID;
-
-  // Effect to initialize the user session when the component mounts.
+  // Effect hook to initialize user session on component mount.
   useEffect(() => {
     const initializeSession = async () => {
       try {
-        // Attempt to fetch the current session.
         const session = await getCurrentSession();
-        setUser(session); // Update the user state if a session is found.
+        setUser(session); // Set user data upon successful session retrieval.
       } catch (error) {
         console.error("No active session found:", error);
-        setError("Failed to fetch session"); // Set error state if session retrieval fails.
+        setError("Failed to fetch session"); // Handle errors in session retrieval.
       }
     };
     initializeSession();
   }, []);
 
-  // Handle user login by validating credentials and fetching documents upon success.
+  // Function to handle user login.
   const handleLogin = async (email, password) => {
     try {
-      const response = await login(email, password);
-      setUser(response); // Update the user state upon successful login.
-      await fetchDocuments(); // Fetch documents for the logged-in user.
-      setError(null); // Clear any existing errors.
+      const { user } = await login(email, password);
+      setUser(user); // Update user state with logged in user data.
+      const docs = await getDocuments(); // Fetch documents post-login.
+      setDocuments(docs); // Update state with fetched documents.
+      setError(null); // Reset errors upon successful login.
     } catch (error) {
       console.error("Login failed:", error);
-      setError("Login failed"); // Set error state if login fails.
+      setError("Login failed"); // Set error state upon login failure.
     }
   };
 
-  // Handle user logout by clearing the user and documents state.
+  // Function to handle user logout.
   const handleLogout = async () => {
     try {
-      await logout();
-      setUser(null); // Clear the user state upon logout.
-      setDocuments([]); // Clear the documents state upon logout.
-      setError(null); // Clear any existing errors.
+      await logout(); // Perform logout action.
+      setUser(null); // Clear user state post-logout.
+      setDocuments([]); // Clear documents state post-logout.
+      setError(null); // Reset errors post-logout.
     } catch (error) {
       console.error("Logout failed:", error);
-      setError("Logout failed"); // Set error state if logout fails.
+      setError("Logout failed"); // Set error state upon logout failure.
     }
   };
 
-  // Fetch documents from the database for the current user.
-  const fetchDocuments = async () => {
-    try {
-      const docs = await getDocuments(databaseId, collectionId);
-      console.log("Fetched Documents:", docs); // Log the fetched documents.
-      setDocuments(docs); // Update the documents state with the fetched data.
-    } catch (error) {
-      console.error("Error fetching documents:", error);
-      setError("Failed to fetch documents"); // Set error state if document fetching fails.
-    }
-  };
-
-  // Return the UserContext provider with the state and functions defined above.
+  // Provider component wrapping child components, passing down user state and handlers.
   return (
-    <UserContext.Provider
-      value={{ user, error, documents, handleLogin, handleLogout }}
-    >
+    <UserContext.Provider value={{ user, error, documents, handleLogin, handleLogout }}>
       {children}
     </UserContext.Provider>
   );
 };
 
-// Custom hook to consume the UserContext, providing access to user-related state and functions.
+// Custom hook to provide easy access to the user context.
 export const useUser = () => useContext(UserContext);

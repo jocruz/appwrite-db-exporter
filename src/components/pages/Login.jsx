@@ -1,68 +1,63 @@
 import React, { useState } from "react";
-import { useUser } from "../contexts/UserContext"; // Import the useUser hook from UserContext for state and actions related to user session.
+import { useUser } from "../contexts/UserContext"; // Provides access to user context and related actions.
 
 const Login = () => {
-  // State management for user credentials.
+  // Manages state for user credentials and form inputs.
   const { user, handleLogin, handleLogout, error, documents } = useUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // Function to handle form submission for user login.
+  // Handles user login on form submission.
   const handleSubmit = async (event) => {
-    event.preventDefault();  // Prevent the default form submit action.
+    event.preventDefault();
     try {
-      await handleLogin(email, password);  // Attempt to login using credentials from state.
+      await handleLogin(email, password);
       console.log("Login successful!");
     } catch (error) {
-      console.error("Login failed:", error.message);  // Log any errors during the login process.
+      console.error("Login failed:", error.message);
     }
   };
 
-  // Function to render documents associated with the logged-in user.
-  const renderDocuments = () =>
+  // Renders documents if available; shows message if none are found.
+  const renderDocuments = () => (
     documents.length > 0 ? (
       <ul>
-        {documents.map((doc) => (
-          <li key={doc.$id}>{doc.$id}</li>  // List each document by its ID.
+        {documents.map((doc, index) => (
+          <li key={index}>
+            <p>Name: {doc.Name || 'No name provided'}</p>
+            <p>ID: {doc.$id || 'No ID'}</p>
+            <p>Tenant: {doc.$tenant || 'No Tenant'}</p>
+            <p>Database ID: {doc.$databaseId || 'No Database ID'}</p>
+            <p>Collection ID: {doc.$collectionId || 'No Collection ID'}</p>
+          </li>
         ))}
       </ul>
     ) : (
-      <p>No documents available.</p>  // Display message if no documents are available.
-    );
+      <p>No documents available.</p>
+    )
+  );
 
-  // Render the login form or user information depending on the login state.
+  // Main render function for the login component.
   return (
     <div>
       <h2>Login</h2>
-      {error && <p className="error">{error}</p>}  // Display any error messages.
+      {error && <p className="error">{error}</p>}
       {user ? (
         <div className="user-info">
-          <p>Welcome, {user.email}</p>  // Show welcome message with user's email if logged in.
-          <button onClick={handleLogout}>Logout</button>  // Provide logout button.
+          <p>Welcome, {user.email}</p>
+          <button onClick={handleLogout}>Logout</button>
           <div>
             <h3>Documents:</h3>
-            {renderDocuments()}  // Call renderDocuments to display the user's documents.
+            {renderDocuments()}
           </div>
         </div>
       ) : (
-        <form onSubmit={handleSubmit}>  // Show login form if no user is logged in.
+        <form onSubmit={handleSubmit}>
           <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}  // Update email state on change.
-            required
-          />
+          <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
           <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}  // Update password state on change.
-            required
-          />
-          <button type="submit">Login</button>  // Submit button for the form.
+          <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <button type="submit">Login</button>
         </form>
       )}
     </div>
