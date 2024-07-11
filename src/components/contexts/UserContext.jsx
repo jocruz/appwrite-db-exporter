@@ -4,7 +4,7 @@ import {
   getDocuments,
   login,
   logout,
-} from "../api/authentication/AuthService";
+} from "../../api/authentication/AuthService";
 
 const UserContext = createContext();
 

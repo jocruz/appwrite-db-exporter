@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useUser } from "../contexts/UserContext"; // Provides access to user context and related actions.
+import { useUser } from "../components/contexts/UserContext"; // Provides access to user context and related actions.
 
 const Login = () => {
   // Manages state for user credentials and form inputs.

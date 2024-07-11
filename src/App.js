@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { UserProvider } from './components/contexts/UserContext'; // Adjust path as needed
-import Login from './components/pages/Login'
+import Login from './pages/Login'
 
 const App = () => {
     return (
