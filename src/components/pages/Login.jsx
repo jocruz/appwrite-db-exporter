@@ -19,23 +19,22 @@ const Login = () => {
   };
 
   // Renders documents if available; shows message if none are found.
-  const renderDocuments = () => (
+  const renderDocuments = () =>
     documents.length > 0 ? (
       <ul>
         {documents.map((doc, index) => (
           <li key={index}>
-            <p>Name: {doc.Name || 'No name provided'}</p>
-            <p>ID: {doc.$id || 'No ID'}</p>
-            <p>Tenant: {doc.$tenant || 'No Tenant'}</p>
-            <p>Database ID: {doc.$databaseId || 'No Database ID'}</p>
-            <p>Collection ID: {doc.$collectionId || 'No Collection ID'}</p>
+            <p>Name: {doc.Name || "No name provided"}</p>
+            <p>ID: {doc.$id || "No ID"}</p>
+            <p>Tenant: {doc.$tenant || "No Tenant"}</p>
+            <p>Database ID: {doc.$databaseId || "No Database ID"}</p>
+            <p>Collection ID: {doc.$collectionId || "No Collection ID"}</p>
           </li>
         ))}
       </ul>
     ) : (
       <p>No documents available.</p>
-    )
-  );
+    );
 
   // Main render function for the login component.
   return (
@@ -46,6 +45,7 @@ const Login = () => {
         <div className="user-info">
           <p>Welcome, {user.email}</p>
           <button onClick={handleLogout}>Logout</button>
+
           <div>
             <h3>Documents:</h3>
             {renderDocuments()}
@@ -54,9 +54,21 @@ const Login = () => {
       ) : (
         <form onSubmit={handleSubmit}>
           <label htmlFor="email">Email:</label>
-          <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
           <label htmlFor="password">Password:</label>
-          <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <input
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
           <button type="submit">Login</button>
         </form>
       )}
