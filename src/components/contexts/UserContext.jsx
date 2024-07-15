@@ -13,24 +13,25 @@ export const UserProvider = ({ children }) => {
   const [documents, setDocuments] = useState([]);
   const [error, setError] = useState(null);
 
+  const manageSession = async () => {
+    try {
+      const session = await getCurrentSession();
+      if (session) {
+        setUser(session); // Set user data upon successful session retrieval
+        const docs = await getDocuments(); // Fetch documents if session is valid
+        setDocuments(docs);
+      } else {
+        setUser(null);
+        setDocuments([]);
+      }
+    } catch (error) {
+      console.error("Session management failed:", error);
+      setError("Failed to manage session"); // Handle errors in session retrieval or document fetching
+    }
+  };
+
   // Effect to manage session and document fetching
   useEffect(() => {
-    const manageSession = async () => {
-      try {
-        const session = await getCurrentSession();
-        if (session) {
-          setUser(session); // Set user data upon successful session retrieval
-          const docs = await getDocuments(); // Fetch documents if session is valid
-          setDocuments(docs);
-        } else {
-          setUser(null);
-          setDocuments([]);
-        }
-      } catch (error) {
-        console.error("Session management failed:", error);
-        setError("Failed to manage session"); // Handle errors in session retrieval or document fetching
-      }
-    };
     manageSession();
   }, []);
 

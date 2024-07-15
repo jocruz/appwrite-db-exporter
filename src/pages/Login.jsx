@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import RenderDocuments from "../components/contexts/Documents";
 import { useUser } from "../components/contexts/UserContext"; // Provides access to user context and related actions.
 
 const Login = () => {
@@ -18,24 +19,6 @@ const Login = () => {
     }
   };
 
-  // Renders documents if available; shows message if none are found.
-  const renderDocuments = () =>
-    documents.length > 0 ? (
-      <ul>
-        {documents.map((doc, index) => (
-          <li key={index}>
-            <p>Name: {doc.Name || "No name provided"}</p>
-            <p>ID: {doc.$id || "No ID"}</p>
-            <p>Tenant: {doc.$tenant || "No Tenant"}</p>
-            <p>Database ID: {doc.$databaseId || "No Database ID"}</p>
-            <p>Collection ID: {doc.$collectionId || "No Collection ID"}</p>
-          </li>
-        ))}
-      </ul>
-    ) : (
-      <p>No documents available.</p>
-    );
-
   // Main render function for the login component.
   return (
     <div>
@@ -48,7 +31,7 @@ const Login = () => {
 
           <div>
             <h3>Documents:</h3>
-            {renderDocuments()}
+            <RenderDocuments documents={documents} />
           </div>
         </div>
       ) : (
