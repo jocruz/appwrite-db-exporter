@@ -1,6 +1,6 @@
 import React from 'react';
 
-const RenderDocuments = ({ documents }) => (
+const DocumentList = ({ documents }) => (
   documents.length > 0 ? (
     <ul>
       {documents.map((doc, index) => (
@@ -18,4 +18,4 @@ const RenderDocuments = ({ documents }) => (
   )
 );
 
-export default RenderDocuments;
+export default DocumentList;

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import RenderDocuments from "../components/contexts/Documents";
+import DocumentList from "../components/contexts/DocumentList";
 import { useUser } from "../components/contexts/UserContext"; // Provides access to user context and related actions.
 
 const Login = () => {
@@ -31,7 +31,7 @@ const Login = () => {
 
           <div>
             <h3>Documents:</h3>
-            <RenderDocuments documents={documents} />
+            <DocumentList documents={documents} />
           </div>
         </div>
       ) : (
