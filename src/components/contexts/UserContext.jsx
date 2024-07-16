@@ -1,62 +1,71 @@
-import React, { useState } from "react";
-import DocumentList from "../components/contexts/DocumentList";
-import { useUser } from "../components/contexts/UserContext"; // Provides access to user context and related actions.
+import React, { createContext, useContext, useEffect, useState } from "react";
+import {
+  getCurrentSession,
+  getDocuments,
+  login,
+  logout,
+} from "../../api/authentication/AuthService";
 
-const Login = () => {
-  // Manages state for user credentials and form inputs.
-  const { user, handleLogin, handleLogout, error, documents } = useUser();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const UserContext = createContext();
 
-  // Handles user login on form submission.
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+export const UserProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [documents, setDocuments] = useState([]);
+  const [error, setError] = useState(null);
+
+  const manageSession = async () => {
     try {
-      await handleLogin(email, password);
-      console.log("Login successful!");
+      const session = await getCurrentSession();
+      if (session) {
+        setUser(session); // Set user data upon successful session retrieval
+        const docs = await getDocuments(); // Fetch documents if session is valid
+        setDocuments(docs);
+      } else {
+        setUser(null);
+        setDocuments([]);
+      }
     } catch (error) {
-      console.error("Login failed:", error.message);
+      console.error("Session management failed:", error);
+      setError("Failed to manage session"); // Handle errors in session retrieval or document fetching
     }
   };
 
-  // Main render function for the login component.
-  return (
-    <div>
-      <h2>Login</h2>
-      {error && <p className="error">{error}</p>}
-      {user ? (
-        <div className="user-info">
-          <p>Welcome, {user.email}</p>
-          <button onClick={handleLogout}>Logout</button>
+  // Effect to manage session and document fetching
+  useEffect(() => {
+    manageSession();
+  }, []);
 
-          <div>
-            <h3>Documents:</h3>
-            <DocumentList documents={documents} />
-          </div>
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <button type="submit">Login</button>
-        </form>
-      )}
-    </div>
+  const handleLogin = async (email, password) => {
+    try {
+      const { user } = await login(email, password);
+      setUser(user); // Update user state with logged in user data.
+      setError(null); // Reset errors upon successful login.
+      await manageSession(); // Ensure documents are fetched after a new login
+    } catch (error) {
+      console.error("Login failed:", error);
+      setError("Login failed"); // Set error state upon login failure.
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setUser(null);
+      setDocuments([]);
+      setError(null);
+    } catch (error) {
+      console.error("Logout failed:", error);
+      setError("Logout failed");
+    }
+  };
+
+  return (
+    <UserContext.Provider
+      value={{ user, error, documents, handleLogin, handleLogout }}
+    >
+      {children}
+    </UserContext.Provider>
   );
 };
 
-export default Login;
+export const useUser = () => useContext(UserContext);
