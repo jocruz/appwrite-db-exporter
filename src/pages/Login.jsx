@@ -20,43 +20,44 @@ const Login = () => {
   };
 
   // Main render function for the login component.
-  return (
-    <div>
-      <h2>Login</h2>
-      {error && <p className="error">{error}</p>}
-      {user ? (
-        <div className="user-info">
-          <p>Welcome, {user.email}</p>
-          <button onClick={handleLogout}>Logout</button>
+ // Main render function for the login component.
+ return (
+  <div>
+    <h2>Login</h2>
+    {error && <p className="error">{error}</p>}
+    {user ? (
+      <div className="user-info">
+        <p>Welcome, {user.email}</p>
+        <button onClick={handleLogout}>Logout</button>
 
-          <div>
-            <h3>Documents:</h3>
-            <DocumentList documents={documents} />
-          </div>
+        <div>
+          <h3>Documents:</h3>
+          <DocumentList documents={documents}/>
         </div>
-      ) : (
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <button type="submit">Login</button>
-        </form>
-      )}
-    </div>
-  );
+      </div>
+    ) : (
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="email">Email:</label>
+        <input
+          type="email"
+          id="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <label htmlFor="password">Password:</label>
+        <input
+          type="password"
+          id="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <button type="submit">Login</button>
+      </form>
+    )}
+  </div>
+);
 };
 
 export default Login;

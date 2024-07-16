@@ -13,6 +13,7 @@ export const UserProvider = ({ children }) => {
   const [documents, setDocuments] = useState([]);
   const [error, setError] = useState(null);
 
+  // Define manageSession outside the useEffect to make it accessible elsewhere
   const manageSession = async () => {
     try {
       const session = await getCurrentSession();
