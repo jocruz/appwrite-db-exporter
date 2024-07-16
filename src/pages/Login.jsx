@@ -1,5 +1,4 @@
 import React from "react";
-import DocumentList from "../components/contexts/DocumentList";
 import LoginHandling from "../components/contexts/LoginHandling";
 import { useUser } from "../components/contexts/UserContext"; // Provides access to user context and related actions.
 
@@ -10,6 +9,21 @@ const Login = () => {
 const handleLoginSubmit = async (email, password) => {
     await handleLogin(email, password);
   };
+const renderDocuments = () =>
+  documents.length > 0 ? (
+    <ul>
+      {documents.map((doc, index) => (
+        <li key={index}>
+         <p>Name: {doc.Name || "No name provided"}</p>
+         <p>ID: {doc.$id || "No ID"}</p>
+         <p>Tenant: {doc.$tenant || "No Tenant"}</p>
+         <p>Database ID: {doc.$databaseId || "No Database ID"}</p>            <p>Collection ID: {doc.$collectionId || "No Collection ID"}</p>
+       </li>
+     ))}
+   </ul>
+ ) : (
+   <p>No documents available.</p>
+ );
 
   // Main render function for the login component.
   return (
@@ -23,7 +37,7 @@ const handleLoginSubmit = async (email, password) => {
 
           <div>
             <h3>Documents:</h3>
-            <DocumentList documents={documents} />
+            {renderDocuments()}
           </div>
         </div>
       ) : (
