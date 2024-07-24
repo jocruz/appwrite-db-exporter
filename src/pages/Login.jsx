@@ -8,7 +8,7 @@ const Login = () => {
 
   return (
     <div>
-      <h2>Login</h2>
+      
       {error && <p className="error">{error}</p>}
       {user ? (
         <div className="user-info">
