@@ -1,4 +1,3 @@
-```markdown
 # 📚 Appwrite Data to CSV - README
 
 Welcome to the Appwrite Data to CSV project! This README will guide you through the structure and functionality of key components in this project. We utilize Chakra UI for improved UX/UI across our components.
@@ -60,6 +59,23 @@ Manages user session, authentication state, and document retrieval through a cen
 
 ### 📂 `components/contexts/DocumentList.jsx`
 
+## Detailed Explanations
+
+### Papaparse
+[Papa Parse](https://www.papaparse.com/) is a powerful, in-browser CSV parser for JavaScript. It's designed to handle large files and provide a wide array of configurations to control how data is parsed and handled. We use Papa Parse in our project to handle the conversion of JSON data to a CSV format efficiently. This library helps in parsing CSV data and converting JSON data into CSV files directly in the browser without any server-side processing.
+
+### Blob
+A `Blob` (Binary Large OBject) represents immutable raw binary data, and they can be read as text or binary data, or converted into a `ReadableStream` so their methods can be used for processing. In our project, we use a `Blob` to create a CSV file. When we convert document data to a CSV format string, we wrap this string in a `Blob` to set the file's MIME type as `text/csv`, which denotes that the file format is CSV.
+
+### link.href and document.body.appendChild
+The `link.href` attribute is used to set the URL of the link, which in this case is the URL of the Blob representing the CSV file. `URL.createObjectURL(blob)` generates a URL that the browser can use to represent the `Blob` object as a link target.
+
+```jsx
+const link = document.createElement('a');
+link.href = URL.createObjectURL(blob);
+link.setAttribute('download', 'documents.csv');
+```
+
 #### Description
 The `DocumentList` component displays a list of documents fetched from the Appwrite database. It includes functionality to export the displayed data to a CSV file, enhancing data portability.
 
@@ -102,4 +118,3 @@ We have integrated Chakra UI into our project to provide a responsive and access
 - **Appwrite SDK**: For backend interactions like user authentication and data retrieval.
 
 Thank you for exploring our Appwrite Data to CSV project!
-```
