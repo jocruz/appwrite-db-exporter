@@ -3,7 +3,6 @@
 import {
   Box,
   Button,
-  Checkbox,
   Flex,
   FormControl,
   FormLabel,
@@ -11,7 +10,7 @@ import {
   Input,
   Stack,
   Text,
-  useColorModeValue,
+  useColorModeValue
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
 
@@ -38,7 +37,7 @@ const LoginForm = ({ handleLogin }) => {
     >
       <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
         <Stack align={'center'}>
-          <Heading fontSize={'4xl'}>Sign in to your account</Heading>
+          <Heading fontSize={'4xl'} textAlign="center">Sign in to Moverz AppWrite Account</Heading>
           <Text fontSize={'lg'} color={'gray.600'}>
             to export your appwrite data ✌️
           </Text>
@@ -76,8 +75,8 @@ const LoginForm = ({ handleLogin }) => {
                 align={'start'}
                 justify={'space-between'}
               >
-                <Checkbox>Remember me</Checkbox>
-                <Text color={'blue.400'}>Forgot password?</Text>
+                {/* <Checkbox>Remember me</Checkbox> */}
+                {/* <Text color={'blue.400'}>Forgot password?</Text> */}
               </Stack>
               <Button
                 type="submit"
